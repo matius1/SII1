@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" lang="JavaScript">
+	var xMLHttpRequest = new XMLHttpRequest();
+
+	function find() {
+		xMLHttpRequest.open("Get", "/SSI1/AjaxServlet?tableName="
+				+ document.getElementById("tableName").value, true);
+		xMLHttpRequest.onreadystatechange = process;
+		xMLHttpRequest.send(null);
+	}
+
+	function process() {
+
+		if (xMLHttpRequest.readyState === XMLHttpRequest.DONE
+				&& xMLHttpRequest.status === 200) {
+			//parsowanie JSON'a
+			var JSONTopicObject = eval('(' + xMLHttpRequest.responseText + ')');
+			var table = document.getElementById("table");
+
+			//wyczyszczenie tabeli
+			table.innerHTML = "";
+
+			//naglowek tabeli
+			var headrow = table.insertRow(0);
+			var headcell = headrow.insertCell(0);
+			headcell.style.backgroundColor = "lightblue";
+			headcell.innerHTML = JSONTopicObject.topic.name;
+
+			//tablica z wynikami
+			var tutorials = JSONTopicObject.topic.tutorial;
+
+			//parsowanie tabeli z wynikami z servletu do postaci tabeli HTML
+			var i = 0;
+			while (i < tutorials.length) {
+				row = table.insertRow(i + 1);
+				cell = row.insertCell(0);
+				cell.innerHTML = tutorials[i++].name;
+			}
+		}
+	}
+</script>
+</head>
+
+<body>
+
+	<h3>Sieciowe Systemy Informacyjne</h3>
+	<h3>lab1 - 10.10.2016</h3>
+	<h3>MATEUSZ SKOCZ</h3>
+	<br />
+	<br />
+
+	<p>Zrobilem "pole wyszukiwania" skladnikow do potraw. W bazie
+		(servlecie) znajduja sie listy skladnikow dla 2 dan: 'pomidorowa',
+		'rosol'.</p>
+	<p>Po wpisaniu w pole konkretnej nazwy dania zostana wyswietlone
+		ponizej w tabeli skladniki.</p>
+	<p>Jesli dania nie ma w bazie, zostanie wyswietlona o tym
+		informacja.</p>
+	<br />
+
+	<input type="text" id="tableName" size="40">
+	<button type="button" onclick='find()'>Znajdz</button>
+	<br />
+	<br>
+	<table id="table"></table>
+
+</body>
+</html>
